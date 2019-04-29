@@ -23,3 +23,8 @@
   width: 16px;
   margin-right: 9px;
 }
+
+.NavHeader img.Logo{
+  box-shadow: 0px 1px 3px rgb(161, 154, 154) !important;
+  max-width: 70px;
+}
