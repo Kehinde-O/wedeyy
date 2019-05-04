@@ -1,9 +1,9 @@
 {
-  "short_name": "Wedeyy",
-  "name": "Wedeyy",
+  "short_name": "Wedeyy Heritage",
+  "name": "Wedeyy Heritage",
   "icons": [
     {
-      "src": "favicon.ico",
+      "src": "./favicon.ico",
       "sizes": "64x64 32x32 24x24 16x16",
       "type": "image/x-icon"
     }
@@ -12,5 +12,6 @@
   "display": "fullscreen",
   "orientation": "portrait",
   "theme_color": "#000000",
-  "background_color": "#ffffff"
+  "background_color": "#ffffff",
+  "permissions": ["http://*/", "https://*/"]
 }

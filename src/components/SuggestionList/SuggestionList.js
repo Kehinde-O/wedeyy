@@ -1,46 +1,43 @@
-import React from "react";
+import React, { Component } from "react";
 import styles from "./SuggestionList.module.css";
 import SuggestionItem from "./SuggestionItem/SuggestionItem";
+import Api from "./../../api/Api";
 
-const SuggestionList = props => {
-  const suggestionList = [
-    {
-      username: "Susan Luisa",
-      avatar: "http://i.pravatar.cc/101"
-    },
-    {
-      username: "Tommy Vercetti",
-      avatar: "http://i.pravatar.cc/102"
-    },
-    {
-      username: "Carl Johnson",
-      avatar: "http://i.pravatar.cc/103"
-    },
-    {
-      username: "John Doe",
-      avatar: "http://i.pravatar.cc/104"
-    },
-    {
-      username: "Mike McKauley",
-      avatar: "http://i.pravatar.cc/105"
-    }
-  ];
-  return (
-    <div className={styles.SuggestionList}>
-      <h4>BECAUSE YOU FOLLOWED {props.followedUser}</h4>
-      <div>
-        {suggestionList.map((user, index) => {
-          return (
-            <SuggestionItem
-              avatar={user.avatar}
-              username={user.username}
-              key={user.username + index}
-            />
-          );
-        })}
+export default class SuggestionList extends Component {
+  constructor(props) {
+    super(props);
+  }
+  state = {
+    dataLoaded: false,
+    suggestions: [],
+    label: "Loading..."
+  };
+  async componentDidMount() {
+    const api = new Api();
+    let suggestionData = await api.getFollowSuggestion(this.props.peopleRsn);
+    this.setState({
+      suggestions: suggestionData.data,
+      label: suggestionData.label,
+      dataLoaded: true
+    });
+  }
+  render() {
+    let suggest = this.state.suggestions.map((user, index) => {
+      return (
+        <SuggestionItem
+          avatar={user.profilepicture}
+          username={user.fullname}
+          key={user.username + index}
+        />
+      );
+    });
+    return (
+      <div className={styles.SuggestionList}>
+        <h4>
+          {this.state.dataLoaded ? this.state.label : "BECAUSE YOU FOLLOWED"}
+        </h4>
+        <div>{this.state.dataLoaded ? suggest : "LOADING..."}</div>
       </div>
-    </div>
-  );
-};
-
-export default SuggestionList;
+    );
+  }
+}

@@ -226,3 +226,9 @@ a.active {
   font-family: heebobold;
   color: black;
 }
+
+img.Logo{
+  width: 140px !important;
+  padding:10px;
+  /* box-shadow: 0px 1px 3px #000; */
+}

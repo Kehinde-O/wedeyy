@@ -20,3 +20,8 @@
 .HeritageHeader a:nth-of-type(2) img {
   width: 100px;
 }
+
+.HeritageHeader img.Logo{
+  opacity: .3;
+  padding: 15px;
+}

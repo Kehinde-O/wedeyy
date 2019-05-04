@@ -1,7 +1,7 @@
 import React from "react";
 import styles from "./HeritageHeader.module.css";
 import Logo from "../Logo/Logo";
-import broadcastIcon from "../../images/broadcast.svg";
+import broadcastIcon from "../../images/Live.svg";
 import menuIcon from "../../images/menu.svg";
 import { Link } from "react-router-dom";
 

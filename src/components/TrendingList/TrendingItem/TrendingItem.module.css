@@ -14,7 +14,8 @@
 }
 
 .TrendingItem img {
-  width: 28px;
+  width: 18px !important;
+  height: 18px !important;
   border-radius: 50%;
   margin-right: 5px;
   margin-left: 6px;

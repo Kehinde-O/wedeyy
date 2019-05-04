@@ -30,7 +30,7 @@ import quoteIcon from "../../images/quotes.svg";
 import photo1 from "../../images/photo1.jpg";
 import photo2 from "../../images/photo2.jpg";
 import photo3 from "../../images/photo3.jpg";
-
+import API from "../../api/Api";
 class Feeds extends React.Component {
   state = {
     startElderUpload: false,
@@ -41,8 +41,18 @@ class Feeds extends React.Component {
     pictureBackgrounds: [pictureBg0, pictureBg1, pictureBg2, pictureBg3],
     photos: [photo1, photo2, photo3],
     filters: ["grayscale", "sepia", "saturate"],
-    openNext: false
+    openNext: false,
+    suggestions: [],
+    suggestionLoaded: false,
+    trending: [],
+    trendingLoaded: false
   };
+
+  async componentDidMount() {
+    this.setState({
+      trending: []
+    });
+  }
 
   // Starts Elder Say Post
   startElderUpload = () => {
@@ -359,13 +369,13 @@ class Feeds extends React.Component {
           click={this.startElderUpload}
         />
         <TrendingList />
-        <FeedNotification
+        {/* <FeedNotification
           image={starIcon}
           heading="You just earned a Star."
           text="Start Family Tree to earn another."
           btnText="Go to Tree"
           target="/profile/tree"
-        />
+        /> */}
         <Feed
           avatar="http://i.pravatar.cc/100"
           user="John Doe"
@@ -393,7 +403,7 @@ class Feeds extends React.Component {
           shareCount={5}
           commentCount={10}
         />
-        <SuggestionList />
+        <SuggestionList peopleRsn="1" />
         <Feed
           avatar="http://i.pravatar.cc/102"
           user="John Doe"
