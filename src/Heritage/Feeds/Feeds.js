@@ -34,7 +34,8 @@ import API from "../../api/Api";
 import FeedLoading from "./../../components/Feed/FeedLoading";
 import {
   default as abbreviateNumber,
-  randomNumber
+  randomNumber,
+  timeSince
 } from "./../../components/GlobalFunctions";
 class Feeds extends React.Component {
   state = {
@@ -184,7 +185,6 @@ class Feeds extends React.Component {
   };
 
   loadingFeed() {
-    alert(new Date());
     return (
       <div>
         <FeedLoading loading={true} />
@@ -207,11 +207,11 @@ class Feeds extends React.Component {
           ? this.loadingFeed()
           : this.state.feeds.map((feed, index) => {
               return (
-                <div>
+                <div key={feed.ID + index + "div"}>
                   <Feed
                     avatar={feed.PROFILEPICTURE}
                     user={feed.FULLNAME}
-                    created="Feb 10 at 01:11 PM"
+                    created={timeSince(feed.POSTDATE)}
                     tags={" " + abbreviateNumber(feed.TAGS)}
                     image={feed.POSTPICTURE}
                     reachCount={abbreviateNumber(feed.POSTVIEWS)}
@@ -220,6 +220,8 @@ class Feeds extends React.Component {
                     shareCount={abbreviateNumber(feed.SHARED)}
                     commentCount={abbreviateNumber(feed.COMMENTS)}
                     liked={feed.LIKED}
+                    key={feed.ID + index}
+                    caption={feed.POSTCAPTION}
                   />
                   {index === this.state.suggestFollowBegin ? (
                     <SuggestionList peopleRsn="1" />

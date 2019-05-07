@@ -34,19 +34,25 @@ export default class SuggestionList extends Component {
       );
     });
     return (
-      <div className={styles.SuggestionList}>
-        <h4>
-          {this.state.dataLoaded ? (
-            this.state.label
-          ) : (
-            <div
-              className={`${globalStyles.titleBar} ${
-                globalStyles.animatedBackground
-              }`}
-            />
-          )}
-        </h4>
-        <div>{this.state.dataLoaded ? suggest : "LOADING..."}</div>
+      <div>
+        {this.state.suggestions.length > 0 ? (
+          <div className={styles.SuggestionList}>
+            <h4>
+              {this.state.dataLoaded ? (
+                this.state.label
+              ) : (
+                <div
+                  className={`${globalStyles.titleBar} ${
+                    globalStyles.animatedBackground
+                  }`}
+                />
+              )}
+            </h4>
+            <div>{this.state.dataLoaded ? suggest : "LOADING..."}</div>
+          </div>
+        ) : (
+          ""
+        )}
       </div>
     );
   }

@@ -25,7 +25,6 @@ export default class Api extends React.Component {
         return response.json();
       })
       .then(data => {
-        console.log("Data: " + JSON.stringify(data));
         return data;
       })
       .catch(error => {
