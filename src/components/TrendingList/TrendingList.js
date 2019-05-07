@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import styles from "./TrendingList.module.css";
+import globalStyles from "../Global.module.css";
 import TrendingItem from "./TrendingItem/TrendingItem";
 import { Link } from "react-router-dom";
 import API from "../../api/Api";
@@ -7,7 +8,8 @@ import API from "../../api/Api";
 export default class TrendingList extends Component {
   state = {
     dataLoaded: false,
-    trending: []
+    trending: [],
+    counter: 0
   };
 
   async componentDidMount() {
@@ -19,25 +21,45 @@ export default class TrendingList extends Component {
     });
   }
   render() {
+    let lt = [{}, {}, {}];
+    let loadingTrending = lt.map((trendingItem, index) => {
+      return (
+        <Link to="/explore/top" key={index}>
+          <TrendingItem loading={true} count={index + 1} />
+        </Link>
+      );
+    });
     return (
-      <div className={styles.TrendingList}>
-        <h4>Trending</h4>
-        <div>
-          {!this.state.dataLoaded
-            ? "Loading"
-            : this.state.trending.map((trendingItem, index) => {
-                return (
-                  <Link to="/explore/top" key={index}>
-                    <TrendingItem
-                      background={trendingItem.POSTPICTURE}
-                      username={trendingItem.FULLNAME}
-                      avatar={trendingItem.PROFILEPICTURE}
-                      videoLength={trendingItem.videoLength}
-                      count={index + 1}
-                    />
-                  </Link>
-                );
-              })}
+      <div className={styles.animatedBackground}>
+        <div className={styles.TrendingList}>
+          <h4>
+            {this.state.dataLoaded ? (
+              "Trending"
+            ) : (
+              <div
+                className={`${globalStyles.titleBar} ${
+                  globalStyles.animatedBackground
+                }`}
+              />
+            )}
+          </h4>
+          <div>
+            {!this.state.dataLoaded
+              ? loadingTrending
+              : this.state.trending.map((trendingItem, index) => {
+                  return (
+                    <Link to="/explore/top" key={index}>
+                      <TrendingItem
+                        background={trendingItem.POSTPICTURE}
+                        username={trendingItem.FULLNAME}
+                        avatar={trendingItem.PROFILEPICTURE}
+                        videoLength={trendingItem.videoLength}
+                        count={index + 1}
+                      />
+                    </Link>
+                  );
+                })}
+          </div>
         </div>
       </div>
     );

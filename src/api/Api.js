@@ -49,4 +49,12 @@ export default class Api extends React.Component {
     const result = await this.makeApiCall(formData);
     return result;
   }
+
+  async getWedeyyFeeds(peopleRsn) {
+    let formData = new FormData();
+    formData.append("code", "3802229692");
+    formData.append("dataPeopleRsn", peopleRsn);
+    const result = await this.makeApiCall(formData);
+    return result;
+  }
 }

@@ -1,7 +1,7 @@
 import React from "react";
 import tagsIcon from "../../images/tags.svg";
 import moreIcon from "../../images/more.svg";
-// import likeIcon from "../../images/like.svg";
+import likeIcon from "../../images/like.svg";
 import likedIcon from "../../images/liked.svg";
 import shareIcon from "../../images/share.svg";
 import commentsIcon from "../../images/comments.svg";
@@ -210,7 +210,10 @@ class Feed extends React.Component {
             </span>
             <div className="controls">
               <button>
-                <img src={likedIcon} alt="like" />
+                <img
+                  src={this.props.liked === "1" ? likedIcon : likeIcon}
+                  alt="like"
+                />
               </button>
               <button>
                 <img src={shareIcon} alt="share" />
@@ -330,7 +333,10 @@ class Feed extends React.Component {
             </span>
             <div className="controls">
               <button>
-                <img src={likedIcon} alt="like" />
+                <img
+                  src={this.props.liked === "1" ? likedIcon : likeIcon}
+                  alt="like"
+                />
               </button>
               <button>
                 <img src={shareIcon} alt="share" />

@@ -31,6 +31,11 @@ import photo1 from "../../images/photo1.jpg";
 import photo2 from "../../images/photo2.jpg";
 import photo3 from "../../images/photo3.jpg";
 import API from "../../api/Api";
+import FeedLoading from "./../../components/Feed/FeedLoading";
+import {
+  default as abbreviateNumber,
+  randomNumber
+} from "./../../components/GlobalFunctions";
 class Feeds extends React.Component {
   state = {
     startElderUpload: false,
@@ -42,15 +47,25 @@ class Feeds extends React.Component {
     photos: [photo1, photo2, photo3],
     filters: ["grayscale", "sepia", "saturate"],
     openNext: false,
-    suggestions: [],
-    suggestionLoaded: false,
-    trending: [],
-    trendingLoaded: false
+    feeds: [],
+    peopleRSN: 1,
+    feedsLoaded: false,
+    suggestFollowBegin: 0
   };
 
+  async getWedeyyFeeds() {
+    const api = new API();
+    let feeds = await api.getWedeyyFeeds(this.state.peopleRSN);
+    return feeds;
+  }
+
   async componentDidMount() {
+    let feeds = await this.getWedeyyFeeds();
+    let sfb = randomNumber(1, feeds.length);
     this.setState({
-      trending: []
+      feeds: feeds,
+      feedsLoaded: true,
+      suggestFollowBegin: sfb
     });
   }
 
@@ -168,199 +183,18 @@ class Feeds extends React.Component {
       "";
   };
 
+  loadingFeed() {
+    alert(new Date());
+    return (
+      <div>
+        <FeedLoading loading={true} />
+        <FeedLoading loading={true} />
+        <FeedLoading loading={true} />
+      </div>
+    );
+  }
+
   render() {
-    // Next Overlay
-    let nextOverlay = this.state.openNext ? (
-      <div className={cx(styles.uploadOverlay, styles.nextOverlay)}>
-        <div className={styles.header}>
-          <h2>Create Photo Post</h2>
-          <img src={closeIcon} alt="close" onClick={this.closeNextOverlay} />
-        </div>
-        <div className={styles.canvas}>
-          <img src={photo1} alt="" />
-        </div>
-        <div className={styles.footer}>
-          <textarea placeholder="Add Caption..." />
-          <div className={styles.tagBox}>
-            <button>Tag Someone</button>
-            <span>Kehinde,</span>
-            <span>Femi,</span>
-            <span>Tunji</span>
-            <span>&nbsp;and 7 more...</span>
-          </div>
-          <div className={styles.location}>
-            <img src={markerIcon} alt="" />
-            <span>Add Location</span>
-            <div className={styles.locations}>
-              <span>Lagos Nigeria</span>
-              <span>Ikeja</span>
-              <span>Opebi</span>
-            </div>
-          </div>
-          <button>Post</button>
-        </div>
-      </div>
-    ) : null;
-    // Elder Say Overlay
-    let uploadOverlay = this.state.startElderUpload ? (
-      <div className={styles.uploadOverlay}>
-        <div className={styles.header}>
-          <h2>Create Elders Say Post</h2>
-          <img src={closeIcon} alt="close" onClick={this.cancelUpload} />
-        </div>
-        <p onClick={this.handleNextOverlay} className={styles.next}>
-          Next
-        </p>
-        <div className={styles.canvas}>
-          <img src={wedeyyBg1} alt="" />
-          <textarea maxLength="100" placeholder="Text goes here" />
-        </div>
-        <div className={styles.footer}>
-          <div className={styles.backgroundType}>
-            <p onClick={e => this.handleSelection(e)} className={styles.active}>
-              Wedeyy Background
-            </p>
-            <p onClick={e => this.handleSelection(e)}>Picture Background</p>
-          </div>
-          <div className={styles.backgrounds}>
-            {this.state.selectedBackgrounds.length
-              ? this.state.selectedBackgrounds
-              : this.state.wedeyyBackgrounds.map(background => {
-                  return (
-                    <img
-                      onClick={e => this.handleBackgroundChange(e)}
-                      key={background}
-                      src={background}
-                      alt=""
-                    />
-                  );
-                })}
-          </div>
-          <div className={styles.uploadType}>
-            <div onClick={this.startPhotoUpload}>
-              <img src={cameraIcon} alt="" />
-              <p>Post Photo</p>
-            </div>
-            <div onClick={this.startVideoUpload}>
-              <img src={videocamIcon} alt="" />
-              <p>Post Video</p>
-            </div>
-            <div>
-              <img src={quoteIcon} alt="" />
-              <p>Create Elders Say</p>
-            </div>
-          </div>
-        </div>
-      </div>
-    ) : null;
-
-    // Photo Post Overlay
-    let uploadImageOverlay = this.state.startPhotoUpload ? (
-      <div className={styles.uploadOverlay}>
-        <div className={styles.header}>
-          <h2>Create Photo Post</h2>
-          <img src={closeIcon} alt="close" onClick={this.cancelUpload} />
-        </div>
-        <p onClick={this.handleNextOverlay} className={styles.next}>
-          Next
-        </p>
-        <div className={styles.canvas}>
-          <img src={photo1} alt="" />
-        </div>
-        <div className={styles.footer}>
-          <div
-            className={styles.backgroundType}
-            style={{ justifyContent: "center" }}
-          >
-            <p className={styles.active}>Add Filter</p>
-          </div>
-          <div className={styles.backgrounds}>
-            <img onClick={this.handleCancelFilter} src={photo1} alt="" />
-            {this.state.filters.map(filter => {
-              return (
-                <img
-                  onClick={this.handleApplyFilter}
-                  key={filter}
-                  style={{ filter: `${filter}(5)` }}
-                  src={photo1}
-                  alt=""
-                />
-              );
-            })}
-          </div>
-          <div className={styles.uploadType}>
-            <div>
-              <img src={cameraIcon} alt="" />
-              <p>Post Photo</p>
-            </div>
-            <div onClick={this.startVideoUpload}>
-              <img src={videocamIcon} alt="" />
-              <p>Post Video</p>
-            </div>
-            <div onClick={this.startElderUpload}>
-              <img src={quoteIcon} alt="" />
-              <p>Create Elders Say</p>
-            </div>
-          </div>
-        </div>
-      </div>
-    ) : null;
-
-    // Video Post Overlay
-    let uploadVideoOverlay = this.state.startVideoUpload ? (
-      <div className={styles.uploadOverlay}>
-        <div className={styles.header}>
-          <h2>Create Video Post</h2>
-          <img src={closeIcon} alt="close" onClick={this.cancelUpload} />
-        </div>
-        <p onClick={this.handleNextOverlay} className={styles.next}>
-          Next
-        </p>
-        <div className={styles.canvas}>
-          <video controls>
-            <source src={video} type="video/mp4" />
-            Your browser does not support the video tag.
-          </video>
-        </div>
-        <div className={styles.footer}>
-          <div
-            className={styles.backgroundType}
-            style={{ justifyContent: "center" }}
-          >
-            <p className={styles.active}>Add Filter</p>
-          </div>
-          <div className={styles.backgrounds}>
-            <img onClick={this.handleCancelFilter} src={photo1} alt="" />
-            {this.state.filters.map(filter => {
-              return (
-                <img
-                  onClick={this.handleApplyFilter}
-                  key={filter}
-                  style={{ filter: `${filter}(5)` }}
-                  src={photo1}
-                  alt=""
-                />
-              );
-            })}
-          </div>
-          <div className={styles.uploadType}>
-            <div onClick={this.startPhotoUpload}>
-              <img src={cameraIcon} alt="" />
-              <p>Post Photo</p>
-            </div>
-            <div>
-              <img src={videocamIcon} alt="" />
-              <p>Post Video</p>
-            </div>
-            <div onClick={this.startElderUpload}>
-              <img src={quoteIcon} alt="" />
-              <p>Create Elders Say</p>
-            </div>
-          </div>
-        </div>
-      </div>
-    ) : null;
-
     return (
       <div className={styles.Feeds}>
         <HeritageHeader />
@@ -369,102 +203,331 @@ class Feeds extends React.Component {
           click={this.startElderUpload}
         />
         <TrendingList />
-        {/* <FeedNotification
-          image={starIcon}
-          heading="You just earned a Star."
-          text="Start Family Tree to earn another."
-          btnText="Go to Tree"
-          target="/profile/tree"
-        /> */}
-        <Feed
-          avatar="http://i.pravatar.cc/100"
-          user="John Doe"
-          created="Feb 10 at 01:11 PM"
-          tags={8}
-          image={feedImg}
-          reachCount="15k"
-          contentType="image"
-          likeCount={77}
-          shareCount={5}
-          commentCount={10}
-        />
-        <DateMatchList />
-        <Feed
-          avatar="http://i.pravatar.cc/101"
-          user="John Doe"
-          created="Feb 10 at 01:11 PM"
-          tags={8}
-          quote="The best way to eat an elephant in your path is cut him up into
-              little pieces.|"
-          author="Says: Swetaleena Dash."
-          reachCount="15k"
-          contentType="textBackground"
-          likeCount={77}
-          shareCount={5}
-          commentCount={10}
-        />
-        <SuggestionList peopleRsn="1" />
-        <Feed
-          avatar="http://i.pravatar.cc/102"
-          user="John Doe"
-          created="Feb 10 at 01:11 PM"
-          tags={8}
-          text="The new Apple Pro Laptop core i8 9th Generation."
-          brand="Apple Inc."
-          btnText="BUY NOW"
-          reachCount="15k"
-          contentType="imageAd"
-          image="http://i.pravatar.cc/401"
-          likeCount={77}
-          shareCount={5}
-          commentCount={10}
-        />
-        <Feed
-          avatar="http://i.pravatar.cc/102"
-          user="John Doe"
-          created="Feb 10 at 01:11 PM"
-          tags={8}
-          video={video}
-          reachCount="15k"
-          contentType="video"
-          likeCount={77}
-          shareCount={5}
-          commentCount={10}
-        />
-        <FeedNotification
-          image={collectionsIcon}
-          heading="Your Memories on Wedeyy."
-          text="Femi, we care about you and others do too. We thought you might look back on today with your family friend, Kehinde Omotoso."
-          btnText="View Memories."
-        />
-        <Feed
-          avatar="http://i.pravatar.cc/103"
-          user="John Doe"
-          created="Feb 10 at 01:11 PM"
-          tags={8}
-          image={feedImg}
-          caption="Pellentesque tincidunt tristique neque, eget venenatis enim gravida quis. Fusce at egestas libero. Cras convallis egestas ullamcorper. Suspendisse sed ultricies nisl, pharetra rutrum mauris. Vestibulum at massa dui. Morbi et purus velit. Etiam tristique, justo eu condimentum efficitur, purus velit facilisis sem, id fringilla tortor quam quis dolor. Praesent ultricies dignissim ex, at volutpat sapien ullamcorper rhoncus. Curabitur quam velit, ullamcorper ut congue eget, convallis et velit. Donec placerat, magna eu venenatis tempus, dui sapien aliquam libero, sit amet maximus erat massa quis nisi. Integer pharetra auctor arcu, non tincidunt dui fermentum ut. Nullam interdum sapien id mauris dapibus, a pharetra purus rhoncus. Nullam viverra iaculis tristique. Donec quis mauris ipsum. Nunc vehicula magna at erat tristique rutrum."
-          reachCount="15k"
-          contentType="imageText"
-          likeCount={77}
-          shareCount={5}
-          commentCount={10}
-        />
-        <FeedNotification
-          image={tetheringIcon}
-          heading="Kehinde is LIVE."
-          text="Join Kehinde and 200 others on his live broadcast. Make live contribution to the ongoing event."
-          btnText="Join Broadcast"
-          btnColor="#C44F4F"
-          target="/broadcast"
-        />
-        {uploadOverlay}
-        {uploadImageOverlay}
-        {uploadVideoOverlay}
-        {nextOverlay}
+        {!this.state.feedsLoaded
+          ? this.loadingFeed()
+          : this.state.feeds.map((feed, index) => {
+              return (
+                <div>
+                  <Feed
+                    avatar={feed.PROFILEPICTURE}
+                    user={feed.FULLNAME}
+                    created="Feb 10 at 01:11 PM"
+                    tags={" " + abbreviateNumber(feed.TAGS)}
+                    image={feed.POSTPICTURE}
+                    reachCount={abbreviateNumber(feed.POSTVIEWS)}
+                    contentType="image"
+                    likeCount={abbreviateNumber(feed.LIKES)}
+                    shareCount={abbreviateNumber(feed.SHARED)}
+                    commentCount={abbreviateNumber(feed.COMMENTS)}
+                    liked={feed.LIKED}
+                  />
+                  {index === this.state.suggestFollowBegin ? (
+                    <SuggestionList peopleRsn="1" />
+                  ) : (
+                    ""
+                  )}
+                </div>
+              );
+            })}
       </div>
     );
   }
 }
 
 export default Feeds;
+
+// // Next Overlay
+// let nextOverlay = this.state.openNext ? (
+//   <div className={cx(styles.uploadOverlay, styles.nextOverlay)}>
+//     <div className={styles.header}>
+//       <h2>Create Photo Post</h2>
+//       <img src={closeIcon} alt="close" onClick={this.closeNextOverlay} />
+//     </div>
+//     <div className={styles.canvas}>
+//       <img src={photo1} alt="" />
+//     </div>
+//     <div className={styles.footer}>
+//       <textarea placeholder="Add Caption..." />
+//       <div className={styles.tagBox}>
+//         <button>Tag Someone</button>
+//         <span>Kehinde,</span>
+//         <span>Femi,</span>
+//         <span>Tunji</span>
+//         <span>&nbsp;and 7 more...</span>
+//       </div>
+//       <div className={styles.location}>
+//         <img src={markerIcon} alt="" />
+//         <span>Add Location</span>
+//         <div className={styles.locations}>
+//           <span>Lagos Nigeria</span>
+//           <span>Ikeja</span>
+//           <span>Opebi</span>
+//         </div>
+//       </div>
+//       <button>Post</button>
+//     </div>
+//   </div>
+// ) : null;
+// // Elder Say Overlay
+// let uploadOverlay = this.state.startElderUpload ? (
+//   <div className={styles.uploadOverlay}>
+//     <div className={styles.header}>
+//       <h2>Create Elders Say Post</h2>
+//       <img src={closeIcon} alt="close" onClick={this.cancelUpload} />
+//     </div>
+//     <p onClick={this.handleNextOverlay} className={styles.next}>
+//       Next
+//     </p>
+//     <div className={styles.canvas}>
+//       <img src={wedeyyBg1} alt="" />
+//       <textarea maxLength="100" placeholder="Text goes here" />
+//     </div>
+//     <div className={styles.footer}>
+//       <div className={styles.backgroundType}>
+//         <p onClick={e => this.handleSelection(e)} className={styles.active}>
+//           Wedeyy Background
+//         </p>
+//         <p onClick={e => this.handleSelection(e)}>Picture Background</p>
+//       </div>
+//       <div className={styles.backgrounds}>
+//         {this.state.selectedBackgrounds.length
+//           ? this.state.selectedBackgrounds
+//           : this.state.wedeyyBackgrounds.map(background => {
+//               return (
+//                 <img
+//                   onClick={e => this.handleBackgroundChange(e)}
+//                   key={background}
+//                   src={background}
+//                   alt=""
+//                 />
+//               );
+//             })}
+//       </div>
+//       <div className={styles.uploadType}>
+//         <div onClick={this.startPhotoUpload}>
+//           <img src={cameraIcon} alt="" />
+//           <p>Post Photo</p>
+//         </div>
+//         <div onClick={this.startVideoUpload}>
+//           <img src={videocamIcon} alt="" />
+//           <p>Post Video</p>
+//         </div>
+//         <div>
+//           <img src={quoteIcon} alt="" />
+//           <p>Create Elders Say</p>
+//         </div>
+//       </div>
+//     </div>
+//   </div>
+// ) : null;
+
+// // Photo Post Overlay
+// let uploadImageOverlay = this.state.startPhotoUpload ? (
+//   <div className={styles.uploadOverlay}>
+//     <div className={styles.header}>
+//       <h2>Create Photo Post</h2>
+//       <img src={closeIcon} alt="close" onClick={this.cancelUpload} />
+//     </div>
+//     <p onClick={this.handleNextOverlay} className={styles.next}>
+//       Next
+//     </p>
+//     <div className={styles.canvas}>
+//       <img src={photo1} alt="" />
+//     </div>
+//     <div className={styles.footer}>
+//       <div
+//         className={styles.backgroundType}
+//         style={{ justifyContent: "center" }}
+//       >
+//         <p className={styles.active}>Add Filter</p>
+//       </div>
+//       <div className={styles.backgrounds}>
+//         <img onClick={this.handleCancelFilter} src={photo1} alt="" />
+//         {this.state.filters.map(filter => {
+//           return (
+//             <img
+//               onClick={this.handleApplyFilter}
+//               key={filter}
+//               style={{ filter: `${filter}(5)` }}
+//               src={photo1}
+//               alt=""
+//             />
+//           );
+//         })}
+//       </div>
+//       <div className={styles.uploadType}>
+//         <div>
+//           <img src={cameraIcon} alt="" />
+//           <p>Post Photo</p>
+//         </div>
+//         <div onClick={this.startVideoUpload}>
+//           <img src={videocamIcon} alt="" />
+//           <p>Post Video</p>
+//         </div>
+//         <div onClick={this.startElderUpload}>
+//           <img src={quoteIcon} alt="" />
+//           <p>Create Elders Say</p>
+//         </div>
+//       </div>
+//     </div>
+//   </div>
+// ) : null;
+
+// // Video Post Overlay
+// let uploadVideoOverlay = this.state.startVideoUpload ? (
+//   <div className={styles.uploadOverlay}>
+//     <div className={styles.header}>
+//       <h2>Create Video Post</h2>
+//       <img src={closeIcon} alt="close" onClick={this.cancelUpload} />
+//     </div>
+//     <p onClick={this.handleNextOverlay} className={styles.next}>
+//       Next
+//     </p>
+//     <div className={styles.canvas}>
+//       <video controls>
+//         <source src={video} type="video/mp4" />
+//         Your browser does not support the video tag.
+//       </video>
+//     </div>
+//     <div className={styles.footer}>
+//       <div
+//         className={styles.backgroundType}
+//         style={{ justifyContent: "center" }}
+//       >
+//         <p className={styles.active}>Add Filter</p>
+//       </div>
+//       <div className={styles.backgrounds}>
+//         <img onClick={this.handleCancelFilter} src={photo1} alt="" />
+//         {this.state.filters.map(filter => {
+//           return (
+//             <img
+//               onClick={this.handleApplyFilter}
+//               key={filter}
+//               style={{ filter: `${filter}(5)` }}
+//               src={photo1}
+//               alt=""
+//             />
+//           );
+//         })}
+//       </div>
+//       <div className={styles.uploadType}>
+//         <div onClick={this.startPhotoUpload}>
+//           <img src={cameraIcon} alt="" />
+//           <p>Post Photo</p>
+//         </div>
+//         <div>
+//           <img src={videocamIcon} alt="" />
+//           <p>Post Video</p>
+//         </div>
+//         <div onClick={this.startElderUpload}>
+//           <img src={quoteIcon} alt="" />
+//           <p>Create Elders Say</p>
+//         </div>
+//       </div>
+//     </div>
+//   </div>
+// ) : null;
+
+// return (
+//   <div className={styles.Feeds}>
+//     <HeritageHeader />
+//     <PostBar
+//       avatar="http://i.pravatar.cc/100"
+//       click={this.startElderUpload}
+//     />
+//     <TrendingList />
+//     {/* <FeedNotification
+//       image={starIcon}
+//       heading="You just earned a Star."
+//       text="Start Family Tree to earn another."
+//       btnText="Go to Tree"
+//       target="/profile/tree"
+//     /> */}
+//     <Feed
+//       avatar="http://i.pravatar.cc/100"
+//       user="John Doe"
+//       created="Feb 10 at 01:11 PM"
+//       tags={8}
+//       image={feedImg}
+//       reachCount="15k"
+//       contentType="image"
+//       likeCount={77}
+//       shareCount={5}
+//       commentCount={10}
+//     />
+//     <DateMatchList />
+//     <Feed
+//       avatar="http://i.pravatar.cc/101"
+//       user="John Doe"
+//       created="Feb 10 at 01:11 PM"
+//       tags={8}
+//       quote="The best way to eat an elephant in your path is cut him up into
+//           little pieces.|"
+//       author="Says: Swetaleena Dash."
+//       reachCount="15k"
+//       contentType="textBackground"
+//       likeCount={77}
+//       shareCount={5}
+//       commentCount={10}
+//     />
+//     <SuggestionList peopleRsn="1" />
+//     <Feed
+//       avatar="http://i.pravatar.cc/102"
+//       user="John Doe"
+//       created="Feb 10 at 01:11 PM"
+//       tags={8}
+//       text="The new Apple Pro Laptop core i8 9th Generation."
+//       brand="Apple Inc."
+//       btnText="BUY NOW"
+//       reachCount="15k"
+//       contentType="imageAd"
+//       image="http://i.pravatar.cc/401"
+//       likeCount={77}
+//       shareCount={5}
+//       commentCount={10}
+//     />
+//     <Feed
+//       avatar="http://i.pravatar.cc/102"
+//       user="John Doe"
+//       created="Feb 10 at 01:11 PM"
+//       tags={8}
+//       video={video}
+//       reachCount="15k"
+//       contentType="video"
+//       likeCount={77}
+//       shareCount={5}
+//       commentCount={10}
+//     />
+//     <FeedNotification
+//       image={collectionsIcon}
+//       heading="Your Memories on Wedeyy."
+//       text="Femi, we care about you and others do too. We thought you might look back on today with your family friend, Kehinde Omotoso."
+//       btnText="View Memories."
+//     />
+//     <Feed
+//       avatar="http://i.pravatar.cc/103"
+//       user="John Doe"
+//       created="Feb 10 at 01:11 PM"
+//       tags={8}
+//       image={feedImg}
+//       caption="Pellentesque tincidunt tristique neque, eget venenatis enim gravida quis. Fusce at egestas libero. Cras convallis egestas ullamcorper. Suspendisse sed ultricies nisl, pharetra rutrum mauris. Vestibulum at massa dui. Morbi et purus velit. Etiam tristique, justo eu condimentum efficitur, purus velit facilisis sem, id fringilla tortor quam quis dolor. Praesent ultricies dignissim ex, at volutpat sapien ullamcorper rhoncus. Curabitur quam velit, ullamcorper ut congue eget, convallis et velit. Donec placerat, magna eu venenatis tempus, dui sapien aliquam libero, sit amet maximus erat massa quis nisi. Integer pharetra auctor arcu, non tincidunt dui fermentum ut. Nullam interdum sapien id mauris dapibus, a pharetra purus rhoncus. Nullam viverra iaculis tristique. Donec quis mauris ipsum. Nunc vehicula magna at erat tristique rutrum."
+//       reachCount="15k"
+//       contentType="imageText"
+//       likeCount={77}
+//       shareCount={5}
+//       commentCount={10}
+//     />
+//     <FeedNotification
+//       image={tetheringIcon}
+//       heading="Kehinde is LIVE."
+//       text="Join Kehinde and 200 others on his live broadcast. Make live contribution to the ongoing event."
+//       btnText="Join Broadcast"
+//       btnColor="#C44F4F"
+//       target="/broadcast"
+//     />
+//     {uploadOverlay}
+//     {uploadImageOverlay}
+//     {uploadVideoOverlay}
+//     {nextOverlay}
+//   </div>
+// );

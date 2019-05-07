@@ -1,0 +1,136 @@
+/* Animation*/
+@keyframes placeHolderShimmer {
+  0% {
+    background-position: -468px 0;
+  }
+  100% {
+    background-position: 468px 0;
+  }
+}
+
+.animatedBackground {
+  animation-duration: 1.25s;
+  animation-fill-mode: forwards;
+  animation-iteration-count: infinite;
+  animation-name: placeHolderShimmer;
+  animation-timing-function: linear;
+  background: #f6f6f6;
+  background: linear-gradient(to right, #f6f6f6 8%, #f0f0f0 18%, #f6f6f6 33%);
+  background-size: 800px 104px;
+  position: relative;
+}
+
+.titleBar {
+  width: 90%;
+  height: 22px;
+  background: #ebebeb;
+  display: block;
+  border-radius: 2px;
+  margin-right: 10px;
+  clear: both;
+  float: none !important;
+  margin-top: 5px;
+}
+
+.titleBarSmall {
+  width: 90%;
+  min-width: 200px;
+  height: 15px;
+  background: #ebebeb;
+  display: block;
+  border-radius: 2px;
+  content: " - ";
+  padding: 0px !important;
+  margin: 0px;
+  clear: both;
+  float: none !important;
+  margin-top: 5px;
+}
+
+.width20 {
+  min-width: 20px !important;
+  max-width: 20px !important;
+}
+
+.width50 {
+  min-width: 50px !important;
+  max-width: 50px !important;
+}
+.width100 {
+  min-width: 100px !important;
+  max-width: 100px !important;
+}
+.width150 {
+  min-width: 150px !important;
+  max-width: 150px !important;
+}
+.width200 {
+  min-width: 200px !important;
+  max-width: 200px !important;
+}
+
+.widthHeight50 {
+  min-width: 50px !important;
+  max-width: 50px !important;
+  min-height: 50px !important;
+  max-height: 50px !important;
+}
+
+.widthHeight100 {
+  min-width: 100px !important;
+  max-width: 100px !important;
+  min-height: 100px !important;
+  max-height: 100px !important;
+}
+
+.widthHeight100 {
+  min-width: 150px !important;
+  max-width: 150px !important;
+  min-height: 150px !important;
+  max-height: 150px !important;
+}
+
+.widthHeight100 {
+  min-width: 200px !important;
+  max-width: 200px !important;
+  min-height: 200px !important;
+  max-height: 200px !important;
+}
+
+.contentBar {
+  width: 100%;
+  height: 300px;
+  background: #ebebeb;
+  display: block;
+  border-radius: 2px;
+}
+
+.loadingImage {
+  background: #ebebeb !important;
+  border-color: #ebebeb !important;
+}
+
+.loadingImageCircle {
+  background: #ebebeb !important;
+  border: 1px #ebebeb !important;
+  width: 60px !important;
+  height: 60px !important;
+  border-radius: 50%;
+  margin: 10px;
+}
+
+.loadingImageBig {
+  background: #ebebeb !important;
+  border-color: #ebebeb !important;
+  min-height: 300px !important;
+  width: 100% !important;
+  display: block !important;
+  float: none !important;
+  margin-top: 10px;
+  clear: both;
+}
+
+.overflowBox {
+  overflow: hidden !important;
+  clear: both;
+}

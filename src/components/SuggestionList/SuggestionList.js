@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import styles from "./SuggestionList.module.css";
+import globalStyles from "../Global.module.css";
 import SuggestionItem from "./SuggestionItem/SuggestionItem";
 import Api from "./../../api/Api";
 
@@ -20,21 +21,30 @@ export default class SuggestionList extends Component {
       label: suggestionData.label,
       dataLoaded: true
     });
+    console.log(styles);
   }
   render() {
     let suggest = this.state.suggestions.map((user, index) => {
       return (
         <SuggestionItem
-          avatar={user.profilepicture}
-          username={user.fullname}
-          key={user.username + index}
+          avatar={user.PROFILEPICTURE}
+          username={user.FULLNAME}
+          key={user.FULLNAME + index}
         />
       );
     });
     return (
       <div className={styles.SuggestionList}>
         <h4>
-          {this.state.dataLoaded ? this.state.label : "BECAUSE YOU FOLLOWED"}
+          {this.state.dataLoaded ? (
+            this.state.label
+          ) : (
+            <div
+              className={`${globalStyles.titleBar} ${
+                globalStyles.animatedBackground
+              }`}
+            />
+          )}
         </h4>
         <div>{this.state.dataLoaded ? suggest : "LOADING..."}</div>
       </div>

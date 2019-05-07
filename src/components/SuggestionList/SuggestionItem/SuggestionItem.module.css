@@ -1,22 +1,26 @@
 .SuggestionItem {
-  width: 106px;
-  height: 143px;
+  width: 145px;
   text-align: center;
   margin-right: 21px;
+  display: flex;
+  flex-direction: column;
+  flex-wrap: wrap;
+  justify-content: center;
 }
 
 .SuggestionItem button {
   background-color: rgba(242, 242, 242, 1);
   border: 1px solid rgba(242, 242, 242, 1);
   border-radius: 5px;
-  padding: 0 18px;
+  padding: 0 25px;
   cursor: pointer;
   outline: none;
   display: flex;
   align-items: center;
-  margin-top: 8px;
+  margin-top: 5px;
   font-family: heebomedium, sans-serif;
   color: rgba(58, 58, 58, 1);
+  justify-content: center;
 }
 
 .SuggestionItem button img {
@@ -25,14 +29,20 @@
 }
 
 .SuggestionItem > img {
-  width: 91px;
-  height: 91px;
+  width: 100px;
+  height: 100px;
   border-radius: 50%;
+  border: 2px #ebebeb solid;
+  box-shadow: 1px 1px 3px #f9f9f9;
+  margin: auto;
 }
 
 .SuggestionItem > p {
   font-family: heebobold;
-  font-size: 11px;
-  line-height: 17px;
+  font-size: 13px;
+  line-height: 15px;
+  text-align: center;
   color: rgba(58, 58, 58, 1);
+  margin: 2px auto;
+  margin-top: 8px;
 }
