@@ -31,7 +31,9 @@ import photo1 from "../../images/photo1.jpg";
 import photo2 from "../../images/photo2.jpg";
 import photo3 from "../../images/photo3.jpg";
 import API from "../../api/Api";
+import Loader from "../../components/loader/loader";
 import FeedLoading from "./../../components/Feed/FeedLoading";
+import globalStyles from "../../components/Global.module.css";
 import {
   default as abbreviateNumber,
   randomNumber,
@@ -43,15 +45,13 @@ class Feeds extends React.Component {
     startPhotoUpload: false,
     startVideoUpload: false,
     selectedBackgrounds: [],
-    wedeyyBackgrounds: [wedeyyBg0, wedeyyBg1, wedeyyBg2, wedeyyBg3, wedeyyBg4],
-    pictureBackgrounds: [pictureBg0, pictureBg1, pictureBg2, pictureBg3],
-    photos: [photo1, photo2, photo3],
     filters: ["grayscale", "sepia", "saturate"],
     openNext: false,
     feeds: [],
     peopleRSN: 1,
     feedsLoaded: false,
-    suggestFollowBegin: 0
+    suggestFollowBegin: 0,
+    uploadLoaded: false
   };
 
   async getWedeyyFeeds() {
@@ -194,14 +194,168 @@ class Feeds extends React.Component {
     );
   }
 
+  pictureUpload() {
+    let file = this.state.pictureToUpload;
+    let reader = new FileReader();
+    reader.onload = () => {
+      this.setState({
+        loadedFile: reader.result,
+        uploadLoaded: true
+      });
+    };
+    reader.readAsDataURL(file);
+
+    return this.state.startPhotoUpload ? (
+      <div className={styles.uploadOverlay}>
+        <div className={styles.header}>
+          <h2>Create Photo Post</h2>
+          <img src={closeIcon} alt="close" onClick={this.cancelUpload} />
+        </div>
+        <p onClick={this.handleNextOverlay} className={styles.next}>
+          Next
+        </p>
+        <div className={styles.canvas}>
+          {this.state.uploadLoaded ? (
+            <canvas id="pictureUploadCanvas" />
+          ) : (
+            <Loader />
+          )}
+        </div>
+        <div className={styles.footer}>
+          <div
+            className={styles.backgroundType}
+            style={{ justifyContent: "center" }}
+          >
+            <p className={styles.active}>Add Filter</p>
+          </div>
+          <div className={styles.backgrounds}>
+            <img
+              onClick={this.handleCancelFilter}
+              src={this.state.loadedFile}
+              alt=""
+            />
+            {this.state.filters.map(filter => {
+              return (
+                <img
+                  onClick={this.handleApplyFilter}
+                  key={filter}
+                  style={{ filter: `${filter}(5)` }}
+                  src={this.state.loadedFile}
+                  alt=""
+                />
+              );
+            })}
+          </div>
+          <div className={styles.uploadType}>
+            <div>
+              <img src={cameraIcon} alt="" />
+              <p>Post Photo</p>
+            </div>
+            <div onClick={this.startVideoUpload}>
+              <img src={videocamIcon} alt="" />
+              <p>Post Video</p>
+            </div>
+            <div onClick={this.startElderUpload}>
+              <img src={quoteIcon} alt="" />
+              <p>Create Elders Say</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    ) : null;
+  }
+
+  eldersSay() {
+    return this.state.startElderUpload ? (
+      <div className={styles.uploadOverlay}>
+        <div className={styles.header}>
+          <h2>Create Elders Say Post</h2>
+          <img src={closeIcon} alt="close" onClick={this.cancelUpload} />
+        </div>
+        <p onClick={this.handleNextOverlay} className={styles.next}>
+          Next
+        </p>
+        <div className={styles.canvas}>
+          <img src={wedeyyBg1} alt="" />
+          <textarea maxLength="100" placeholder="Text goes here" />
+        </div>
+        <div className={styles.footer}>
+          <div className={styles.backgroundType}>
+            <p onClick={e => this.handleSelection(e)} className={styles.active}>
+              Wedeyy Background
+            </p>
+            <p onClick={e => this.handleSelection(e)}>Picture Background</p>
+          </div>
+          <div className={styles.backgrounds}>
+            {this.state.selectedBackgrounds.length
+              ? this.state.selectedBackgrounds
+              : this.state.wedeyyBackgrounds.map(background => {
+                  return (
+                    <img
+                      onClick={e => this.handleBackgroundChange(e)}
+                      key={background}
+                      src={background}
+                      alt=""
+                    />
+                  );
+                })}
+          </div>
+          <div className={styles.uploadType}>
+            <div onClick={this.startPhotoUpload}>
+              <img src={cameraIcon} alt="" />
+              <p>Post Photo</p>
+            </div>
+            <div onClick={this.startVideoUpload}>
+              <img src={videocamIcon} alt="" />
+              <p>Post Video</p>
+            </div>
+            <div>
+              <img src={quoteIcon} alt="" />
+              <p>Create Elders Say</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    ) : null;
+  }
+
+  handleClick = e => {
+    this.inputElement.click();
+  };
+
+  tempSaveFile(e, command) {
+    let pU = command === 1 ? true : false;
+    let vU = command === 2 ? true : false;
+    let eS = command === 3 ? true : false;
+    this.setState({
+      pictureToUpload: e.target.files[0],
+      startElderUpload: eS,
+      startPhotoUpload: pU,
+      startVideoUpload: vU
+    });
+  }
+
   render() {
+    if (this.state.startPhotoUpload) {
+      return this.pictureUpload();
+    }
+    if (this.state.startVideoUpload) {
+    }
+    if (this.state.startElderUpload) {
+      return this.eldersSay();
+    }
     return (
       <div className={styles.Feeds}>
-        <HeritageHeader />
-        <PostBar
-          avatar="http://i.pravatar.cc/100"
-          click={this.startElderUpload}
+        <input
+          type="file"
+          name="file"
+          onChange={e => this.tempSaveFile(e, 1)}
+          className={globalStyles.hiddenInput}
+          ref={input => (this.inputElement = input)}
+          accept="image/*"
         />
+        <HeritageHeader />
+        <PostBar avatar="http://i.pravatar.cc/100" click={this.handleClick} />
         <TrendingList />
         {!this.state.feedsLoaded
           ? this.loadingFeed()

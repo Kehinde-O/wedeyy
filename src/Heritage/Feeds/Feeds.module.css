@@ -39,7 +39,8 @@
   position: relative;
 }
 
-.canvas img {
+.canvas img,
+.canvas canvas {
   object-fit: cover;
   width: 100%;
   height: 100%;
